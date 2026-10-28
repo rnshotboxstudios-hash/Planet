@@ -1,5 +1,7 @@
 # Planet — original product scope
 
+The authoritative working scope and revised recovery requirements are in [PLANET_ANCHOR.md](PLANET_ANCHOR.md). Galactus automatically diagnoses, delegates, verifies repairs, and continues; the student is not the repair dispatcher.
+
 Build an educational autonomous workflow factory for ages 10+. A student gives a mission; a renameable Overseer plans the team, equips agents, supplies workstations, connects handoffs, and explains each step in clear language. Avoid making students discover hidden capability/equipment dependencies. The Overseer should diagnose failures, propose supported repairs, add agents/tools when needed, and preserve completed work during recovery. Room placement should eventually adapt and expand instead of trapping the student in layout errors.
 
 Visuals: original anime collectible-style agents in Minecraft-inspired, smoothly bevelled octagonal warehouse rooms, thick readable borders, green/wood/stone materials, alien landscapes outside. StarNet-style and Sims-like ambient walking, glances, pauses, visits, and work gestures make the space feel alive. Ambient activity never counts as task success or earnings.

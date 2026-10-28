@@ -1,5 +1,7 @@
 # Planet project guidance
 
+Read [PLANET_ANCHOR.md](PLANET_ANCHOR.md) first. It preserves the owner’s product scope: Galactus owns automatic repair and delegates equipment/layout problems to the Architect. Never make student troubleshooting or manual maintenance dispatch the normal recovery flow.
+
 Planet is an educational workflow factory for ages 10+. The visual direction is an interactive Minecraft-inspired sci-fi warehouse: an actual cutaway room, original oversized-head anime collectible-style crew, octagonal details, chunky readable borders, and green/wood/stone materials. Alien terrain, plants, and planets belong outside the factory walls and windows.
 
 The reference is https://github.com/androoAGI/starnet. Inspect its room-based workflow approach without copying third-party source or art unless licensing and attribution are addressed.
