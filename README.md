@@ -27,3 +27,8 @@ The UI is a Three.js warehouse with a cutaway structure, windows onto an alien b
 The interface self-hosts its font and uses original geometry without external image downloads. A WebGL-capable browser is required for the 3D view; basic build controls remain usable if graphics initialization fails. Reduced-motion preferences disable idle character movement.
 
 Visual updates are reviewed with an actual browser screenshot and a separately labeled generated picture. Preview images are checked into the `planet-preview` branch for HTTPS viewing.
+
+## Investor reel and execution recovery
+`previews/year-4/planet-year4-investor-reel.mp4` is a silent 40-second animated concept reel: Year 1 workshop, Year 4 master workshop, district, planet (10 seconds each). The original concept plates remain static; independently animated crew sprites, parcels, and energy overlays illustrate proposed motion. This is not live app footage. Reproduce with `python scripts/render-concept-reel.py` using Pillow and ffmpeg.
+
+The actual 3D app also has ambient walking/visiting/work gestures and a LIFE pause control. The server caches validated successful model-step artifacts atomically under ignored `.planet-data/outputs`; failed requests remain retryable and identical simultaneous requests share one execution. Tests cover restart recovery and retry behavior with injected tool functions. Real model execution is still unverified pending a secure server credential (`PLANET_AI_KEY`, or an existing `OPENAI_API_KEY`) and an available `PLANET_MODEL`. The proxy-secret destination is `api.openai.com`.

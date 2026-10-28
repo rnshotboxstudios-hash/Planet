@@ -1,9 +1,10 @@
+import {createWalker,advanceWalker,workerRoute} from './agent-motion.js';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 // A little physical world, built from original geometry rather than a background image.
 export function createFactoryScene(container, initial = {}) {
-  const options = { placed: [], selected: 'inbox', running: false, done: false, onPlace() {}, onSelect() {}, ...initial };
+  const options = { placed: [], selected: 'inbox', running: false, done: false, ambient:true, onPlace() {}, onSelect() {}, ...initial };
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#152c38');
   scene.fog = new THREE.Fog('#152c38', 55, 110);
@@ -146,10 +147,10 @@ export function createFactoryScene(container, initial = {}) {
   for(const x of [-3.8,-1.8,.2,2.2,4.2]){const arrow=sign('➜',x,.215,2.43,.4,.4,world,{size:250,background:'#aeb89e',border:'#aeb89e',color:'#e4d6a0'});arrow.rotation.x=-Math.PI/2;}
 
   function character(x,z,color,hair,variant,parent=world,scale=1){
-    const g=group(x,.2,z,parent);g.scale.setScalar(scale);
+    const g=group(x,.2,z,parent);g.scale.setScalar(scale);const limbs=[];
     // Oversized soft octagonal head, tiny body, large black bead eyes.
     box(.48,.59,.36,color,0,.58,0,g,.07);box(.58,.08,.4,'#2f3c32',0,.3,0,g,.035);
-    for(const side of [-1,1]){box(.19,.3,.22,'#3d4840',side*.15,.18,0,g,.04);box(.24,.13,.36,'#384336',side*.15,.08,.06,g,.045);box(.17,.46,.2,color,side*.34,.6,0,g,.06);sphere(.105,palette.skin,side*.34,.36,.02,g);}
+    for(const side of [-1,1]){const leg=group(side*.15,.31,0,g);box(.19,.3,.22,'#3d4840',0,-.13,0,leg,.04);limbs.push({part:leg,side,kind:'leg'});box(.24,.13,.36,'#384336',0,-.23,.06,leg,.045);const arm=group(side*.34,.81,0,g);box(.17,.46,.2,color,0,-.21,0,arm,.06);sphere(.105,palette.skin,0,-.45,.02,arm);limbs.push({part:arm,side,kind:'arm'});}
     const head=group(0,1.18,.015,g);box(.91,.82,.72,palette.skin,0,0,0,head,.17);
     for(const side of [-1,1]){sphere(.095,palette.skin,side*.455,-.08,0,head);const eye=sphere(.115,'#162329',side*.205,-.045,.343,head);eye.scale.set(1,1.15,.42);sphere(.024,'#ffffff',side*.18,-.01,.389,head,8);box(.1,.045,.015,'#d8917e',side*.28,-.2,.36,head,.012);}
     // The hairstyle has chunky anime locks and a swept front fringe.
@@ -172,7 +173,7 @@ export function createFactoryScene(container, initial = {}) {
       const halo=new THREE.Mesh(geometry(new THREE.TorusGeometry(.51,.038,6,16,Math.PI)),material('#6f8755'));halo.position.set(0,.05,-.03);head.add(halo);
       box(.56,.56,.08,'#8ba65a',0,.55,-.24,g,.05);box(.09,.14,.025,'#e1c462',.12,.69,.21,g,.01);
     }
-    bobs.push({g,head,baseY:g.position.y,offset:Math.random()*6});return g;
+    bobs.push({g,head,limbs,variant,baseY:g.position.y,offset:bobs.length*1.7});return g;
   }
   character(1.15,3.75,'#5e7d55','#a9bb62','overseer',world,1.08);
   const overseerLabel=sign('MOSS  /  OVERSEER',1.15,.24,4.5,2.1,.35,world,{size:67,background:'#586e4c',color:'#f3e7b8',border:'#a6bc72'});overseerLabel.rotation.x=-Math.PI/2;
@@ -208,6 +209,13 @@ export function createFactoryScene(container, initial = {}) {
   box(16.4,.17,.26,'#36533e',0,.16,5.35);for(let i=0;i<10;i++){const stripe=box(.75,.025,.25,i%2?'#576747':'#c9ad58',-7.5+i*1.55,.27,5.33,world,0);stripe.rotation.y=-.12;}
   const floorSign=sign('MAKE SOMETHING THAT MATTERS',-.8,.24,3.05,3.1,.42,world,{size:53,background:'#aab597',border:'#aab597',color:'#dde0ba'});floorSign.rotation.x=-Math.PI/2;
 
+  // Workers walk in the clear aisles, not through benches, walls, or the belt.
+  world.updateMatrixWorld(true);
+  bobs.forEach((b,i)=>{world.attach(b.g);b.baseY=b.g.position.y;const home={x:b.g.position.x,z:b.g.position.z};
+    const captain=b.variant==='overseer';
+    b.walker=createWalker(home,captain?[{x:-3,z:3.75,wait:2,action:'looking'},{x:3.5,z:3.75},{x:3.5,z:2.6,wait:3,action:'inspecting'},{x:3.5,z:3.75},{...home,wait:5,action:'working'}]:workerRoute(home.x,home.z,[-.8,2.5,-4.3][i-1]),{delay:captain?2:3+(i-1)*24,speed:captain?.8:.9,rest:captain?8:65});
+    b.g.userData.agentRole=b.variant;
+  });
   let zoom=1,disposed=false,frame=0,width=1,height=1;
   function resize(){if(disposed)return;const rect=container.getBoundingClientRect();width=Math.max(rect.width,1);height=Math.max(rect.height,1);renderer.setSize(width,height,false);const aspect=width/height;const halfW=aspect<1.2?11.9:11.5;const halfH=Math.max(7.4,halfW/aspect);camera.left=-halfW;camera.right=halfW;camera.top=halfH;camera.bottom=-halfH;camera.zoom=zoom;camera.updateProjectionMatrix();}
   function update(next={}){Object.assign(options,next);const placed=new Set(options.placed);for(const [id,t]of toolGroups){t.content.visible=placed.has(id);t.ghost.visible=!placed.has(id);}for(const h of highlights){h.ring.material.opacity=h.id===options.selected?1:.5;}renderer.domElement.style.cursor=options.selected?'crosshair':'default';}
@@ -221,7 +229,24 @@ export function createFactoryScene(container, initial = {}) {
   renderer.domElement.addEventListener('pointerdown',pointerDown);renderer.domElement.addEventListener('pointermove',pointerMove);renderer.domElement.addEventListener('pointerup',pointerUp);
   const ro=new ResizeObserver(resize);ro.observe(container);resize();update();
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;const clockTime=performance.now();
-  function animate(){if(disposed)return;const t=(performance.now()-clockTime)/1000;for(const b of bobs){b.g.position.y=b.baseY+(reduced?0:Math.sin(t*1.7+b.offset)*.018);b.head.rotation.y=reduced?0:Math.sin(t*.5+b.offset)*.045;}for(const c of movingCrates){c.visible=options.placed.length>0;c.position.x=options.running?((t*1.5+c.userData.offset)%11.5)-5.75:c.userData.offset-5.4;}for(const h of highlights){if(h.id===options.selected)h.ring.material.opacity=reduced?1:.7+Math.sin(t*3)*.28;}renderer.render(scene,camera);frame=requestAnimationFrame(animate);}
+  let previous=performance.now();
+  function animate(){if(disposed)return;const now=performance.now(),dt=Math.min((now-previous)/1000,.15);previous=now;const t=(now-clockTime)/1000;
+    for(const b of bobs){const visible=b.variant==='overseer'||options.placed.includes(b.variant);b.g.visible=visible;if(!visible)continue;
+      const animateLife=!reduced&&options.ambient!==false;
+      if(animateLife)advanceWalker(b.walker,dt);
+      const walking=animateLife&&b.walker.walking;
+      b.g.position.x=b.walker.position.x;b.g.position.z=b.walker.position.z;
+      b.g.position.y=b.baseY+(animateLife?(walking?Math.abs(Math.sin(b.walker.steps*9))*.045:Math.sin(t*1.7+b.offset)*.013):0);
+      const heading=walking?b.walker.heading:0;
+      if(animateLife){let turn=heading-b.g.rotation.y;turn=Math.atan2(Math.sin(turn),Math.cos(turn));b.g.rotation.y+=turn*Math.min(1,dt*7);}
+      b.head.rotation.y=animateLife&&!walking?Math.sin(t*.7+b.offset)*.19:0;
+      b.head.rotation.z=animateLife&&b.walker.action==='looking'?Math.sin(t*1.5)*.07:0;
+      for(const limb of b.limbs){limb.part.rotation.x=walking?Math.sin(b.walker.steps*9)*.5*limb.side*(limb.kind==='arm'?-1:1):animateLife&&limb.kind==='arm'&&b.walker.action==='working'?Math.sin(t*4+b.offset)*.12:0;limb.part.rotation.z=animateLife&&limb.kind==='arm'&&limb.side===1&&b.walker.action==='visiting'?-.9+Math.sin(t*5)*.16:0;}
+    }
+    for(const c of movingCrates){c.visible=options.placed.length>0;c.position.x=options.running&&!reduced&&options.ambient!==false?((t*1.5+c.userData.offset)%11.5)-5.75:c.userData.offset-5.4;}
+    for(const h of highlights){if(h.id===options.selected)h.ring.material.opacity=reduced||options.ambient===false?1:.7+Math.sin(t*3)*.28;}
+    renderer.render(scene,camera);frame=requestAnimationFrame(animate);
+  }
   animate();
   return {update,resetCamera(){azimuth=defaultAzimuth;elevation=defaultElevation;zoom=1;positionCamera();resize();},setZoom(value){zoom=Math.max(.65,Math.min(1.45,value));camera.zoom=zoom;camera.updateProjectionMatrix();},resize,dispose(){disposed=true;cancelAnimationFrame(frame);ro.disconnect();renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointerup',pointerUp);for(const item of resources)item.dispose?.();renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};
 }

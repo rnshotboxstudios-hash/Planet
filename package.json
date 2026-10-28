@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "api": "node server.js",
-    "test": "node --test server.test.js"
+    "test": "node --test server.test.js agent-motion.test.js execution-store.test.js"
   },
   "devDependencies": {
     "vite": "^7.1.0"
