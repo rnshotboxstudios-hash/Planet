@@ -1,19 +1,17 @@
-PLANET — WORKING TWO-ROOM DEMO
+PLANET — MISSION WORKSPACE PREVIEW
 
-Extract the ZIP, then open planet-demo.html in a modern browser with WebGL enabled.
-Click PLAN MY TEAM or MISSION ROOMS.
-Switch between Discovery & Production and Review & Growth.
-Give an agent creative instructions. Click BUILD WEBSITE DRAFT.
-Preview or download the generated HTML website draft.
+Extract the ZIP and open planet-demo.html in a modern WebGL-capable browser.
+If your browser blocks local HTML, serve this folder using a local web server.
 
-This demo is self-contained: its code, fonts and 3D geometry are included.
-If your browser blocks opening local HTML files, serve this folder with a local
-web server (for example: python -m http.server 8000).
+The Scout's first task option is Scour the Galaxy. Select LOAD TASK to save that
+research mission and read the complete instructions. This does not run a search.
+BLAST OFF is the separate mission launch action.
 
-This is a development demo, not the finished income platform. Local website
-export uses a template. Live research, AI images/videos, posting, sales and
-payments are not connected here. The separate AI Workshop requires a configured
-server; it is not included as a live service in this offline package.
+The single HTML file includes the room graphics, code, styles and fonts.
+Real AI tasks require Planet's running server and configured service connections;
+the ZIP is a visual/workspace preview, not a self-contained paid AI service.
+No website template is the default action. Task outputs belong in the real outbox.
+Sales, posting and payments are not connected in this development version.
 
-Your room plan, agent instructions and draft are saved in this browser's storage.
-Do not enter sensitive personal information into a development demo.
+Creative directions and room state are saved on this browser.
+See THIRD-PARTY-NOTICES.txt for bundled software and font licenses.

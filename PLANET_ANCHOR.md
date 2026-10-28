@@ -48,3 +48,7 @@ These are provisional design choices for owner review after a concrete one/two-r
 ## Acceptance demonstration
 
 Use an owner's business idea to build one or two actual rooms. Show the idea becoming a team with the right capabilities, student-directed research/design revisions, real downloadable outputs, and a working pipeline. Deliberately remove equipment, introduce a layout contradiction, and omit a specialist. Galactus must automatically assign repairs/add the specialist, verify the fix, and continue without asking the student to troubleshoot or dispatch the Architect. Separately prove that unavailable credentials/permissions are not misrepresented as a successful repair. Add public posting, verified sales triggers and payouts only after their own end-to-end validation.
+
+## Primary-action correction
+
+The main action is **Blast Off**: send the student's goal into the task inbox and execute a goal-specific agent pipeline. Planet is not a website builder. Do not use a fixed website template or generic report as a substitute for a requested business task. If the objective is a sale, production files alone do not satisfy that objective: track production, authorized listing/promotion and the verified transaction as distinct states. The real runtime's events, tool receipts and outbox drive work status; ambient animation does not.

@@ -215,6 +215,13 @@ export function createFactoryScene(container, initial = {}) {
     }
     content.traverse(o=>{if(o.isMesh){o.userData.toolId=bay.id;targets.push(o)}});toolGroups.set(bay.id,{content,ghost,g});
   }
+  for(const [i,role] of (options.profile?.extraRoles||[]).entries()){
+    const station=group(-3.4+i*3,.2,-2.65);desk({},station);
+    box(.76,.56,.12,'#32574d',-.25,1.37,-.35,station,.04);
+    box(.63,.42,.02,'#83ccc2',-.25,1.38,-.28,station,.02);
+    character(.36,.47,'#719dae','#664e75','maker',station,.78);bobs.at(-1).stationary=true;
+    const plaque=sign(role.toUpperCase()+' BAY',0,.17,.95,1.8,.3,station,{size:63});plaque.rotation.x=-Math.PI/2;
+  }
   // Front factory threshold reads as a room, not an island.
   box(16.4,.17,.26,'#36533e',0,.16,5.35);for(let i=0;i<10;i++){const stripe=box(.75,.025,.25,i%2?'#576747':'#c9ad58',-7.5+i*1.55,.27,5.33,world,0);stripe.rotation.y=-.12;}
   const floorSign=sign('MAKE SOMETHING THAT MATTERS',-.8,.24,3.05,3.1,.42,world,{size:53,background:'#aab597',border:'#aab597',color:'#dde0ba'});floorSign.rotation.x=-Math.PI/2;
@@ -223,7 +230,7 @@ export function createFactoryScene(container, initial = {}) {
   world.updateMatrixWorld(true);
   bobs.forEach((b,i)=>{world.attach(b.g);b.baseY=b.g.position.y;const home={x:b.g.position.x,z:b.g.position.z};
     const captain=b.variant==='overseer';
-    b.walker=createWalker(home,captain?[{x:-3,z:3.75,wait:2,action:'looking'},{x:3.5,z:3.75},{x:3.5,z:2.6,wait:3,action:'inspecting'},{x:3.5,z:3.75},{...home,wait:5,action:'working'}]:workerRoute(home.x,home.z,[-.8,2.5,-4.3][i-1]),{delay:captain?2:3+(i-1)*24,speed:captain?.8:.9,rest:captain?8:65});
+    b.walker=createWalker(home,b.stationary?[]:captain?[{x:-3,z:3.75,wait:2,action:'looking'},{x:3.5,z:3.75},{x:3.5,z:2.6,wait:3,action:'inspecting'},{x:3.5,z:3.75},{...home,wait:5,action:'working'}]:workerRoute(home.x,home.z,[-.8,2.5,-4.3][(i-1)%3]),{delay:captain?2:3+(i-1)*24,speed:captain?.8:.9,rest:captain?8:65});
     b.g.userData.agentRole=b.variant;
   });
   let zoom=1,disposed=false,frame=0,width=1,height=1;
