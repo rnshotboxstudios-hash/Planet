@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "api": "node server.js",
-    "test": "node --test server.test.js agent-motion.test.js execution-store.test.js galactus.test.js mission-artifacts.test.js mission-runtime.test.js mission-api.test.js mission-provider.test.js mission-client.test.js scout-tasks.test.js",
+    "test": "node --test server.test.js agent-motion.test.js execution-store.test.js galactus.test.js mission-artifacts.test.js mission-runtime.test.js mission-api.test.js mission-provider.test.js mission-client.test.js scout-tasks.test.js role-protocols.test.js",
     "demo": "npm run build && node scripts/package-demo.mjs"
   },
   "devDependencies": {

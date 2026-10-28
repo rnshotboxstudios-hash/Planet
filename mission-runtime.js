@@ -1,3 +1,4 @@
+import {getRoleProtocol} from './role-protocols.js';
 import {getScoutTask} from './scout-tasks.js';
 import {randomUUID} from 'node:crypto';
 import {mkdir,readFile,writeFile,readdir,rename} from 'node:fs/promises';
@@ -34,7 +35,10 @@ export function createMissionRuntime({directory,provider,search,connected=()=>tr
  log(m,'Galactus','team-ready',`I planned ${m.plan.steps.length} task-specific stages.`);await persist(m);}
  while(m.step<m.plan.steps.length){
  checkDeadline();
- const step=m.plan.steps[m.step];maintainBlueprint(m.world);
+ const step=m.plan.steps[m.step];
+ const protocol=getRoleProtocol(step.role);
+ if(protocol){m.roleStartedAt||={};if(!m.roleStartedAt[step.role])m.roleStartedAt[step.role]=new Date().toISOString();if(Date.now()-Date.parse(m.roleStartedAt[step.role])>protocol.limits.durationMinutes*60000)throw Error('The Artist production time budget has expired. Work is preserved for Galactus.');}
+ maintainBlueprint(m.world);
  if(!m.world.agents.some(a=>a.role===step.role)){const specialist=createBlueprint(step.role==='video'?'video mission':'creative mission').agents.find(a=>a.role===step.role);m.world.agents.push(specialist);maintainBlueprint(m.world);log(m,'Galactus','specialist-added',`I added a ${step.role} for this stage.`);}
  if(!['write_file','create_svg','web_search'].includes(step.tool)||step.tool==='web_search'&&!search){m.status='managed-hold';log(m,'Galactus','tool-connection',`This mission needs ${step.tool.replaceAll('_',' ')}. An authorized service adapter must be connected; I will not substitute pretend results.`);await persist(m);return m;}
  m.status='working';log(m,step.role,'stage-start',step.task);await persist(m);
@@ -45,6 +49,7 @@ export function createMissionRuntime({directory,provider,search,connected=()=>tr
  let useful=false,done=false;let repairs=0;
  for(let turn=0;turn<10;turn++){
  checkDeadline();
+ if(protocol&&Date.now()-Date.parse(m.roleStartedAt[step.role])>protocol.limits.durationMinutes*60000)throw Error('The Artist production time budget has expired. Work is preserved for Galactus.');
  let action;try{action=await provider.next({goal:m.goal,directions:m.directions,taskPreset:getScoutTask(m.taskPresetId),step,files:m.artifacts.map(a=>({...a,content:a.content.slice(0,6000)})),history:m.events.slice(-8).map(e=>({...e,message:e.message.slice(0,2000)})),tools:[step.tool,'read_file','complete']});}catch(e){if(e.terminal||repairs++>=2)throw e;log(m,'Galactus','automatic-retry','The model service interrupted this stage. I am retrying while keeping completed files.');continue;}
  if(!action||!['write_file','create_svg','read_file','complete'].includes(action.action))throw Error('Unsupported agent action.');
  if(action.action==='complete'){if(!useful){log(m,'Galactus','repair','This stage has no verified tool result yet. I am asking the agent to perform its assigned work.');continue;}done=true;break;}

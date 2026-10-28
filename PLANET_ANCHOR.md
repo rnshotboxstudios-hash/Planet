@@ -52,3 +52,7 @@ Use an owner's business idea to build one or two actual rooms. Show the idea bec
 ## Primary-action correction
 
 The main action is **Blast Off**: send the student's goal into the task inbox and execute a goal-specific agent pipeline. Planet is not a website builder. Do not use a fixed website template or generic report as a substitute for a requested business task. If the objective is a sale, production files alone do not satisfy that objective: track production, authorized listing/promotion and the verified transaction as distinct states. The real runtime's events, tool receipts and outbox drive work status; ambient animation does not.
+
+## Artist default protocol
+
+`role-protocols.js` is the canonical Artist-only default. New and existing Artists inherit it automatically. Galactus uses it as a planning reference; Artist stages receive the full protocol as execution instructions. It covers brief/evidence handoff, audience-specific art direction, bounded reference checks, dimensions, text accuracy, revision limits, verification and outbox handoff. Student creative directions remain separate. The Artist card exposes the full read-only protocol. Installing or viewing it must not launch a mission. The twenty-minute Artist deadline is checked at stage/tool boundaries. The three-billable-image/edit limit remains a production instruction/adapter requirement; no raster image-production adapter is connected yet, so do not claim a live generation budget has been validated.

@@ -1,3 +1,4 @@
+import {getRoleProtocol} from './role-protocols.js';
 // Internal coordination foundation; service adapters supply actual execution.
 export const ROLE_KITS={
  scout:['research-desk','communications','web-research'],
@@ -21,6 +22,7 @@ function provision(world,role){
  if(!ROLE_KITS[role])throw new Error('Unknown specialist role.');
  let agent=world.agents.find(a=>a.role===role);
  if(!agent){agent={id:role,role,room:['reviewer','promoter','scaler'].includes(role)?'growth':'production',equipment:[],capabilities:[]};world.agents.push(agent);event(world,'Galactus','add-agent',`I added a ${role} so the team has the right specialist.`);}
+ const protocol=getRoleProtocol(role);if(protocol)agent.protocolId=protocol.id;
  for(const item of ROLE_KITS[role]){if(!agent.equipment.includes(item)){agent.equipment.push(item);event(world,'Architect','equip',`I equipped the ${role} with ${item}.`);}if(!agent.capabilities.includes(item))agent.capabilities.push(item);}
  return agent;
 }
