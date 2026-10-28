@@ -27,6 +27,13 @@ function provision(world,role){
 // Layout/equipment are model manifests until the room renderer consumes this plan.
 function arrange(world){for(const room of world.rooms){const agents=world.agents.filter(a=>a.room===room.id);room.width=Math.max(6,Math.min(3,agents.length)*3+2);room.depth=Math.max(6,Math.ceil(agents.length/3)*3+3);agents.forEach((a,i)=>{a.bay={x:2+(i%3)*3,z:2+Math.floor(i/3)*3};a.inboxConnected=true;a.handoffConnected=true;});}event(world,'Architect','layout',"I arranged the bays and handoffs with room to work.");}
 function layoutOkay(world){return world.agents.every(a=>{const r=world.rooms.find(r=>r.id===a.room);return r&&a.bay&&Number.isFinite(a.bay.x)&&Number.isFinite(a.bay.z)&&a.bay.x>=1&&a.bay.x<=r.width-1&&a.bay.z>=1&&a.bay.z<=r.depth-1&&a.inboxConnected&&a.handoffConnected&&!world.agents.some(b=>b!==a&&b.room===a.room&&b.bay&&Math.hypot(b.bay.x-a.bay.x,b.bay.z-a.bay.z)<2);});}
+export function maintainBlueprint(world){
+ const before=world.events.length;
+ const production=/video|film|animation/i.test(world.goal)?'video':'artist';
+ for(const role of [...new Set(['scout',production,'builder','reviewer','promoter','scaler',...world.agents.map(a=>a.role)])])provision(world,role);
+ if(!layoutOkay(world))arrange(world);
+ return world.events.slice(before);
+}
 export async function executeWithGalactus(world,step,adapters,{repairBudget=3}={}){
  if(!ROLE_KITS[step.role]||!ROLE_KITS[step.role].includes(step.capability))throw new Error('Unsupported role or capability.');
  if(!Number.isInteger(repairBudget)||repairBudget<0||repairBudget>5)throw new Error('Invalid repair budget.');

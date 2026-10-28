@@ -1,0 +1,19 @@
+PLANET — WORKING TWO-ROOM DEMO
+
+Extract the ZIP, then open planet-demo.html in a modern browser with WebGL enabled.
+Click PLAN MY TEAM or MISSION ROOMS.
+Switch between Discovery & Production and Review & Growth.
+Give an agent creative instructions. Click BUILD WEBSITE DRAFT.
+Preview or download the generated HTML website draft.
+
+This demo is self-contained: its code, fonts and 3D geometry are included.
+If your browser blocks opening local HTML files, serve this folder with a local
+web server (for example: python -m http.server 8000).
+
+This is a development demo, not the finished income platform. Local website
+export uses a template. Live research, AI images/videos, posting, sales and
+payments are not connected here. The separate AI Workshop requires a configured
+server; it is not included as a live service in this offline package.
+
+Your room plan, agent instructions and draft are saved in this browser's storage.
+Do not enter sensitive personal information into a development demo.

@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "api": "node server.js",
-    "test": "node --test server.test.js agent-motion.test.js execution-store.test.js galactus.test.js"
+    "test": "node --test server.test.js agent-motion.test.js execution-store.test.js galactus.test.js mission-artifacts.test.js",
+    "demo": "npm run build && node scripts/package-demo.mjs"
   },
   "devDependencies": {
     "vite": "^7.1.0"

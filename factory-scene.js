@@ -14,7 +14,7 @@ export function createFactoryScene(container, initial = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8));
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
@@ -111,7 +111,7 @@ export function createFactoryScene(container, initial = {}) {
   pipe([[-7.6,4.9,-4.78],[6.9,4.9,-4.78],[7.25,4.55,-4.78],[7.25,2,-4.78]],'#6b8770',.09);
   pipe([[-7.72,.9,3.8],[-7.72,4.9,3.8],[-7.72,5.1,3.5],[-7.72,5.1,-3]],'#846e4c',.09);
   box(.65,.9,.18,'#4a6552',7.1,1.65,-4.82);box(.4,.28,.04,'#bed99a',7.1,1.85,-4.7);cyl(.06,.06,.025,'#dfb65e',7.1,1.45,-4.7).rotation.x=Math.PI/2;
-  sign('PLANET  WORKS',6.25,4.18,-4.88,2.65,.72,world,{size:73});
+  sign(options.profile?.title||'PLANET  WORKS',6.25,4.18,-4.88,2.65,.72,world,{size:73});
   sign('IDEAS IN.  AWESOME OUT.',6.25,3.57,-4.87,2.65,.32,world,{size:48,color:'#546747',background:'#ded6b3',border:'#988860'});
   const plaque=sign('FACTORY  01',-7.72,4.83,3.5,2,.43);plaque.rotation.y=Math.PI/2;
   // Storage loft and its octagonal safety posts.
@@ -176,7 +176,7 @@ export function createFactoryScene(container, initial = {}) {
     bobs.push({g,head,limbs,variant,baseY:g.position.y,offset:bobs.length*1.7});return g;
   }
   character(1.15,3.75,'#5e7d55','#a9bb62','overseer',world,1.08);
-  const overseerLabel=sign('MOSS  /  OVERSEER',1.15,.24,4.5,2.1,.35,world,{size:67,background:'#586e4c',color:'#f3e7b8',border:'#a6bc72'});overseerLabel.rotation.x=-Math.PI/2;
+  const overseerLabel=sign('GALACTUS / OVERSEER',1.15,.24,4.5,2.1,.35,world,{size:67,background:'#586e4c',color:'#f3e7b8',border:'#a6bc72'});overseerLabel.rotation.x=-Math.PI/2;
   // A compact sci-fi service console. All controls belong inside the building.
   const consoleBase=group(6.8,.2,-1.7);box(1.12,1.3,.72,'#3c5b51',0,.7,0,consoleBase,.09);box(.92,.15,.78,'#718b68',0,1.42,0,consoleBase,.035);
   box(.86,.58,.12,'#263e38',0,1.9,-.18,consoleBase,.045);box(.7,.4,.018,material('#65d1c0',{emissive:'#368f80',emissiveIntensity:.42}),0,1.9,-.108,consoleBase,.02);
@@ -185,6 +185,7 @@ export function createFactoryScene(container, initial = {}) {
   box(.15,.06,.18,'#d2b15c',.22,1.53,.15,consoleBase);box(.15,.06,.18,'#83b4a0',-.22,1.53,.15,consoleBase);
   // Fixed bay positions are deliberate and spatial; the pipeline remains clear.
   const bays=[{id:'inbox',x:-5.75,z:3.2,color:'#e0ba65',name:'01  IDEA INBOX'}, {id:'scout',x:-4.3,z:-.15,color:'#81a9bb',name:'02  SCOUT BAY'}, {id:'maker',x:-.85,z:-.45,color:'#d4a666',name:'03  CREATOR BAY'}, {id:'checker',x:2.5,z:-.25,color:'#a995c2',name:'04  CHECK BAY'}, {id:'outbox',x:5.75,z:2.95,color:'#9db968',name:'05  LAUNCH BAY'}];
+  if(options.profile?.labels)for(const bay of bays){if(options.profile.labels[bay.id])bay.name=options.profile.labels[bay.id];}
   const targets=[];
   function pad(bay){const g=group(bay.x,.2,bay.z);g.userData.toolId=bay.id;const disk=cyl(1.08,1.13,.1,'#718169',0,.02,0,g);cyl(.98,.98,.022,'#8d9d79',0,.083,0,g);const ring=new THREE.Mesh(geometry(new THREE.RingGeometry(.98,1.025,8)),material(bay.color,{transparent:true,opacity:.8}));ring.rotation.x=-Math.PI/2;ring.position.y=.103;g.add(ring);highlights.push({ring,id:bay.id});const hit=box(1.7,.02,1.7,material('#ffffff',{transparent:true,opacity:0,depthWrite:false}),0,.13,0,g);hit.userData.toolId=bay.id;targets.push(hit);return g;}
   function desk(bay,g){box(1.75,.17,.82,'#99754d',0,.91,-.22,g,.07);box(1.68,.05,.78,'#c9b588',0,1.02,-.22,g,.02);for(const x of [-.7,.7])for(const z of [-.5,.03])box(.12,.75,.12,'#49604a',x,.5,z,g);box(.45,.32,.45,'#697b58',.55,.61,-.2,g,.02);}
@@ -202,6 +203,15 @@ export function createFactoryScene(container, initial = {}) {
       desk(bay,content);box(.64,.075,.48,'#e4d9ae',-.32,1.085,-.14,content,.02);for(let i=0;i<3;i++)box(.32,.012,.018,'#6c8365',-.32,1.13,-.25+i*.11,content,.002);cyl(.17,.14,.25,'#ac98b0',.58,1.19,-.4,content);character(.36,.47,'#8c64af','#4d3654','checker',content,.8);
     }else{
       box(1.35,.4,1.1,'#546d49',0,.3,0,content,.08);cyl(.56,.62,.16,'#d1bc76',0,.6,0,content);cyl(.39,.43,.09,'#a5bd72',0,.73,0,content);crate(0,.79,0,.62,content,true);for(const x of [-.6,.6]){cyl(.07,.07,1.3,'#546a48',x,.98,-.36,content);sphere(.12,'#d3df9a',x,1.67,-.36,content);}sign('READY TO SHIP',0,.46,.56,1.1,.22,content,{size:70});
+    }
+    if(options.profile?.mode==='growth'&&['scout','maker','checker'].includes(bay.id)){
+      box(.9,.7,.09,'#254e47',-.3,1.65,-.4,content,.04);
+      box(.78,.57,.015,material('#74c8b2',{emissive:'#317d72',emissiveIntensity:.4}),-.3,1.65,-.34,content,.015);
+      for(let j=0;j<4;j++)box(.1,.1+j*.075,.02,['#e9d286','#afd797','#b2a6da','#80c8ce'][j],-.56+j*.18,1.46+j*.035,-.32,content,.003);
+    }
+    if(options.profile?.video&&bay.id==='maker'){
+      box(.45,.3,.28,'#294c48',-.45,1.38,-.1,content,.05);const lens=cyl(.11,.11,.21,'#7ebfc1',-.45,1.38,.1,content);lens.rotation.x=Math.PI/2;
+      for(const dx of [-.14,.14]){const leg=box(.035,.42,.035,'#3b6254',-.45+dx,1.13,-.1,content);leg.rotation.z=dx;}
     }
     content.traverse(o=>{if(o.isMesh){o.userData.toolId=bay.id;targets.push(o)}});toolGroups.set(bay.id,{content,ghost,g});
   }
@@ -230,7 +240,7 @@ export function createFactoryScene(container, initial = {}) {
   const ro=new ResizeObserver(resize);ro.observe(container);resize();update();
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;const clockTime=performance.now();
   let previous=performance.now();
-  function animate(){if(disposed)return;const now=performance.now(),dt=Math.min((now-previous)/1000,.15);previous=now;const t=(now-clockTime)/1000;
+  function animate(){if(disposed)return;if(options.suspended){frame=requestAnimationFrame(animate);return;}const now=performance.now(),dt=Math.min((now-previous)/1000,.15);previous=now;const t=(now-clockTime)/1000;
     for(const b of bobs){const visible=b.variant==='overseer'||options.placed.includes(b.variant);b.g.visible=visible;if(!visible)continue;
       const animateLife=!reduced&&options.ambient!==false;
       if(animateLife)advanceWalker(b.walker,dt);
